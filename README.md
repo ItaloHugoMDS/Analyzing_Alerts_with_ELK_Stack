@@ -46,6 +46,6 @@ Here will come a detailed analysis of the data.
 [link2]: https://securityonionsolutions.com/
 [link3]: https://bammv.github.io/sguil/index.html
 [link4]: https://www.elastic.co/elastic-stack
-[link5]: 
-[link6]: 
-[link7]: 
+[link5]: https://github.com/ItaloHugoMDS/Analyzing_Alerts_with_ELK_Stack#prompt
+[link6]: https://github.com/ItaloHugoMDS/Analyzing_Alerts_with_ELK_Stack#questions-and-answers
+[link7]: https://github.com/ItaloHugoMDS/Analyzing_Alerts_with_ELK_Stack#analysis
