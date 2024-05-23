@@ -54,13 +54,15 @@ For the purpose of clarity, the answers will be provided here and further explai
 
 The answers for the previous questions are:  
 
-1. What was the specific time of the attack in 2019-03-19? => **Started at 01:45 am and ended at 04:54 pm.**  
+1. What was the specific time of the attack in 2019-03-19? => **Started at 01:45 am and ended at 04:54 am.**  
 2. Which Windows host computer was infected? => **Hostname: BOB-TIGER-PC, Host Domain: littletigers.info.**  
 3. What was the computer infected with? => **VBKryjector (Trojan)** and **Dridex (Info-stealer)**.  
 
 ---
 
 # Analysis  
+
+## Alerts  
 
 The first step for the analysis will focus on verifying alerts. [Sguil][link3] tool will be the starting point, from
 there the research will be pivoted to other tools and areas for further inspection.  
@@ -190,7 +192,7 @@ In order to classify this as a malicious event, further investigation needs to b
 Pivoting to the traffic analysis tool [Wireshark][link8], an object could be extracted from the traffic which is the
 file contained in the alerts: "**test1.exe**".  
 
-![Alert 1-6 - File Info](./images/7-Alert3_File1_Info.png "Alert 1-6 - File Info")  
+![Event 1-6 - File Info](./images/7-Alert3_File1_Info.png "Event 1-6 - File Info")  
 
 By extracting the file from the previously seen pcap, some information can be determined about the file:  
 
@@ -202,7 +204,7 @@ The SHA256 hash is going to be used to further investigate the origin and intent
 The first resource that is going to be used to investigate the file's origin is [VirusTotal][link9]. A resource which
 provide information about known malicious files, websites, domains, IPs, etc.  
 
-![Alert 1-6 - File Verification](./images/8-Alert3_File1_Evaluation.png "Alert 1-6 - File Verification")  
+![Event 1-6 - File Verification](./images/8-Alert3_File1_Evaluation.png "Event 1-6 - File Verification")  
 
 Searching the file's hash in VirusTotal, the website returns many different indications that this file is malign in
 origin. Some of those indications are listed as follows:  
@@ -213,6 +215,88 @@ origin. Some of those indications are listed as follows:
 4. The category of the file => **Trojan**;  
 5. Family which the file is associated => **VBKryjector**;  
 6. Different labels set by the vendors.  
+
+After assessing that the downloaded file it's in fact malicious in nature, a simple Google search yields more
+information about this virus.  
+
+![Event 1-6 - File Research](./images/9-Alerts3_File1_Research.png "Event 1-6 - File Research")  
+
+According to an article from [FortiGuard][link10], the virus is a **Trojan** malware, which can be used for many
+different purposes, such as stealing user's information, downloading or uploading data/files from or to a server on the
+internet, or even be used as an agent in a botnet.  
+
+Now that the infection was identified and verified, it's time to proceed with analysing the alerts.  
+
+![Alert 4 - Suspicious Traffic](./images/10-Alert4.png "Alert 4 - Suspicious Traffic")  
+
+The following alert goes to a different address than the previous ones, so this alert is treated as a completely
+different event.  
+
+Some information are highlighted in the detail's alerts:  
+
+- The **msg** info labeled this alert as a "**Trojan REMCOM/RAT**" type of activity;  
+- The **content** segment lists some hexadecimal values which was detected as a signature for malicious activities;  
+- **Metadata** info of the rule also categorized as a **Trojan** activity;  
+- Ensuring that this alert was generated due to a malicious activity on the network, the **classtype** information was
+also flagged as **trojan-activity**.  
+
+Since the previous infection was assessed as a **trojan** type of malware, now this alert, which was time-wise very
+close to the ones before, is categorized as a trojan type of activity. It's possible that they might be correlated.    
+
+In order to make sure those alerts have some correlation, it's important to analyse the traffic of this data.  
+
+![Alert 4 - Traffic Analysis](./images/10-Alert4_Transcript.png "Alert 4 - Traffic Analysis")  
+
+Some important details are highlighted in the picture:  
+
+1. The **Destination IP address**, which is the same one contained in the alert;  
+2. The **Destination Port**, which is important due to the fact that it is not associated with any known protocols or
+applications for web communication;  
+3. The actual data that was being transmitted, which seems to be encoded.  
+
+Those transmissions look a lot like **C2** (*Command and Control*) type of traffic. The reason being that usually the
+**source** address (*the **blue** highlighted data*) doesn't send so much information to the **destination** address
+(*the **red** highlighted data*).  
+
+Another indication that this might be **C2** related traffic is the constant exchange of information going out of the
+host and coming into it. In healthy traffic exchanges, the host might request a webpage or a file from a server, and the
+server will be the one in charge of handling the heavy data.  
+
+Commonly, the host might just acknowledge the reception of data but itself won't be the one sending data back to the
+server. The repeated two-way communication that was happening, it's frequently associated with a **remote shell**
+environment type of traffic. That would explain the **REMCOM/RAT** flag which was set by the alert.   
+
+One more indication that this is malicious traffic is the **destination port** used for this exchange. In normal
+communication, the host would reach out to a server through a known port, frequently associated with a service/protocol
+for data transfer (e.g. DNS: port53, HTTP: port 80 or HTTPS: port 443). This traffic is using an unusual destination
+port.  
+
+The use of encoded data is another aspect that should be mentioned, since secure protocol will make use of
+**encryption**, which is harder to crack and generate garbage data. In this transmission, it's possible to identify
+certain repeated pattern with slight modifications line after line. If encryption was being used, this repetition of
+patterns wouldn't occur.  
+
+Due to the short time spam between initial infection and this suspicious transmission of data, considering all the
+indications of this being *C2* traffic as well, it's possible to assume those malicious events are related to each
+other.  
+
+Proceeding with the investigation, a new set of alerts were generated.  
+
+![Alert 5 - New Set of Alerts](./images/11-Alert5.png "Alert 5 - New Set of Alerts")  
+
+Similarly to the previous alerts, these will be categorized as belonging to the same event due to the recurrence
+of information, such as the same **SRC IP** (*Source IP*), **DST IP** (*Destination IP*), **SPort** (*Source Port*), and
+**DPort** (*Destination Port*).  
+
+![Alert 5 - Event 1](./images/11-Alert5_Event1.png "Alert 5 - Event 1")  
+
+The details to be noticed are:  
+
+- The **msg** info generated by the rule, detected a "*hostile exe file*";  
+- The **content** info confirms the presence of a Windows Executable file contained in the transmitted data;  
+- The **classtype** flagged this as a type of **trojan-activity**.  
+
+![Alert 5 - Event 2](./images/11-Alert5_Event2.png "Alert 5 - Event 2")  
 
 
 
@@ -227,3 +311,4 @@ origin. Some of those indications are listed as follows:
 [link7]: https://github.com/ItaloHugoMDS/Analyzing_Alerts_with_ELK_Stack#analysis
 [link8]: https://www.wireshark.org/
 [link9]: https://www.virustotal.com/
+[link10]: https://fortiguard.fortinet.com/encyclopedia/virus/8078615
