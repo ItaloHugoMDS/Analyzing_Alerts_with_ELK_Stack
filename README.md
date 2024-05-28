@@ -298,6 +298,78 @@ The details to be noticed are:
 
 ![Alert 5 - Event 2](./images/11-Alert5_Event2.png "Alert 5 - Event 2")  
 
+This event appears to be very similar as the previous one. The ".exe" file was also detected with the same
+**classtype**. The only new detail is the **content** information, which detected the "**MZ**" characters contained in
+every Windows executable.  
+
+![Alert 5 - Event 3](./images/11-Alert5_Event3.png "Alert 5 - Event 3")  
+
+This alert presents the same flags and the previously discussed event.  
+
+![Alert 5 - Event 4](./images/11-Alert5_Event4.png "Alert 5 - Event 4")  
+
+New information comes up in this event. However, the indications are the same, pointing to the executable file.  
+
+![Alert 5 - Event 5](./images/11-Alert5_Event5.png "Alert 5 - Event 5")  
+
+![Alert 5 - Event 6](./images/11-Alert5_Event6.png "Alert 5 - Event 6")  
+
+![Alert 5 - Event 7](./images/11-Alert5_Event7.png "Alert 5 - Event 7")  
+
+The three last events have the similar flags, but they all point to the same problem: **a strange Windows executable
+file being downloaded from an unauthorized server over an unencrypted connection.**  
+
+As previously mentioned, an executable file being downloaded is not an uncommon behaviour, although it may violate
+the company's police.  
+
+Further investigation needs to be performed to verify the trustworthiness of this executable.  
+
+![Alert 5 - Traffic Transcript](./images/11-Alert5_Transcript.png "Alert 5 - Traffic Transcript")  
+
+The first step is to analyze the data traffic of the connection. Some details need to be pointed out:  
+
+1. The IP address that is present in all the previous seen alerts;  
+2. The HTTP GET which requested a file name "**f4.exe**", in fact a Windows executable;  
+3. The server-side confirmation of the ".exe" file;  
+4. Signature contained in all Windows executable files.  
+
+In conclusion, the alerts positively detected the executable file, which was confirmed by investigation the data traffic
+of the conversation.  
+
+Now, it's time to analyse the downloaded file itself to evaluate if it is malicious in nature.  
+
+![Event 5 - Wireshark Traffic](./images/11-Alert5_Wireshark_Traffic.png "Event 5 - Wireshark Traffic")  
+
+Wireshark's traffic contains all the data necessary to be able to extract the raw file.  
+
+![Alert 5 - File 2 - Info](./images/12-Alert5_File2_Info.png "Alert 5 - File 2 - Info")
+
+By extracting the file, other information can be taken from it:  
+
+1. Confirming it's in fact a Windows executable;  
+2. The SHA256 hash, which will be used for further analysis.  
+
+Since a hash was created, the next step is pivoting to [VirusTotal][link9] to verify if this file is associated with
+malicious activities.  
+
+![Alert 5 - File 2 - Evaluation](./images/13-Alert5_File2_Evaluation.png "Alert 5 - File 2 - Evaluation")  
+
+VirusTotal yielded some results from different vendors, details to be pointed are:  
+
+1. File's hash => **5865e801e6324166d6d05b39a14f2a8a798c6eb652831f78c2634f2b7a400eaf**;  
+2. Most common name for the file => **win32uiole.pyd**;  
+3. The labels commonly assigned to the file => **Cridex**;  
+4. The category assigned to the file => **Trojan**;  
+5. Family labels associated to the file => **Cridex**;  
+6. File evaluation done by multiple vendors.  
+
+The search confirmed that the executable it's malicious in nature and has obscure intentions. It was identified as a
+variation of the **Cridex** malware.  
+
+A simple Google search returns more information about this family of malware.  
+
+![Alert 5 - File 2 - Research](./images/14-Alert5_File2_Research.png "Alert 5 - File 2 - Research")  
+
 
 
 ---
