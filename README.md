@@ -715,7 +715,7 @@ Still investigating into the **01:49** time spam, more logs of importance show u
 ![Alerts 4 and 5 - Querying for Snort](./images/43-Alert4_and_5_Timestamp_Query_Snort.png "Alerts 4 and 5 - Querying for Snort")  
 
 Since many logs were retrieved from the initial time query, a new filter was added in order to narrow the search even
-more. The filter will search for the timestamp **and** for any logs associated with the Snort IDS/IPS tool.  
+more. The filter will search for the timestamp **and** any logs associated with the Snort IDS/IPS tool.  
 
 ![Alerts 4 and 5 - NIDS Summary](./images/44-Alert4_and_5_Timestamp_NIDS_Events.png "Alerts 4 and 5 - NIDS Summary")  
 
