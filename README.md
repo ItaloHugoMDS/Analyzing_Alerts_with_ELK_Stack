@@ -719,7 +719,21 @@ more. The filter will search for the timestamp **and** any logs associated with 
 
 ![Alerts 4 and 5 - NIDS Summary](./images/44-Alert4_and_5_Timestamp_NIDS_Events.png "Alerts 4 and 5 - NIDS Summary")  
 
+The *NIDS Summary* tab points, once again, to a possible malicious Windows executable file contained in the captured
+data. The following step is to look into the logs.  
 
+![Alerts 4 and 5 - Logs](./images/45-Alert4_and_5_Timestamp_Logs.png "Alerts 4 and 5 - Logs")  
+
+The logs show that most of the traffic is coming from **HTTP** connection on port **80**.  
+
+Highlighted on the image, it's the previously seen IP address associated with the download of the **Cridex** malware.
+Therefore, it's likely that those logs are related to the event of the download of the malicious file.  
+
+To confirm this hypothesis, it's necessary to analyse the logs in depth.  
+
+![Alerts 4 and 5 - Wireshark Traffic](./images/46-Alert4_and_5_Timestamp_Traffic.png "Alerts 4 and 5 - Wireshark Traffic")  
+
+By analysing the logs
 
 ---
 
