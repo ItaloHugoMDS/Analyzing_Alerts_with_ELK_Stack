@@ -733,7 +733,176 @@ To confirm this hypothesis, it's necessary to analyse the logs in depth.
 
 ![Alerts 4 and 5 - Wireshark Traffic](./images/46-Alert4_and_5_Timestamp_Traffic.png "Alerts 4 and 5 - Wireshark Traffic")  
 
-By analysing the logs
+By analysing the logs, it's confirmed the alerts come from the download of the malicious file, named "**F4.exe**",
+associated with the **Cridex** info-stealer malware.  
+
+1. Malicious file being requested;  
+2. Header of a Windows Executable file.  
+
+Now, both downloads related to the malwares have been assessed using Kibana. However, other malicious activities were
+contained in Sguil, which need to be evaluated.  
+
+![Alert 6 - Timestamp Filtering](./images/47-Alert6_Timestamp.png "Alert 6 - Timestamp Filtering")  
+
+Following the timestamps on the alerts, the next event occurred at **02:03**, which will be the time used for the filter.  
+
+![Alert 6 - Timestamp Overview](./images/48-Alert6_Timestamp_Overview.png "Alert 6 - Timestamp Overview")  
+
+The filter returned a narrower number of logs. Still, many logs from different types of traffic were happening at the
+time. The most important ones are from the **Snort** tool.  
+
+![Alert 6 - Snort Filter](./images/49-Alert6_Timestamp_Snort_Alerts.png "Alert 6 - Snort Filter")  
+
+Filtering for the logs related to the **Snort** tool only:  
+
+1. Snort filter;  
+2. Total amount of log from the tool.  
+
+Now that the search is more focussed, the logs will be analysed.  
+
+![Alert 6 - NIDS Summary](./images/50-Alert6_Timestamp_NIDS_Alerts.png "Alert 6 - NIDS Summary")  
+
+The First detail to be looked at is the summary tab. Here, the alerts point to a possible **malicious SSL certificate**
+withing a specific IP address, and traffic associated with **Remcos/RAT trojan** in another IP address.  
+
+![Alert 6 - Logs](./images/51-Alert6_Timestamp_Snort_Logs.png "Alert 6 - Logs")  
+
+Investigating the logs, two different events are contained, which will be analysed separately.  
+
+1. Event 1: IP **31.22.4.176** associated with **malicious SSL Certificate**;  
+2. Event 2: IP **103.1.184.108** associated with **Remcos/Rat traffic**.  
+
+![Alert 6 - Log 1](./images/52-Alert6_Timestamp_Snort_Log_1.png "Alert 6 - Log 1")  
+
+The first event (***IP—31.22.4.176***) has already been assessed during Sguil' alerts' investigation but reappeared now
+during Kibana's investigation. The malicious SSL can be verified here:  
+
+1. IP related to the insecure HTTPS traffic;  
+2. The **Certificate** tab;  
+3. Tab related to the **issuer** of the certificate;  
+4. Valuable information related to the issuer.  
+
+As mentioned before, all the info from the SSL connection is fake, even though some data related to location is true. 
+Therefore, the connection is unreliable and insecure.  
+
+![Alert 6 - Log 2](./images/53-Alert6_Timestamp_Snort_Log_2.png "Alert 6 - Log 2")  
+
+The second event (***IP—103.1.184.108***) contains signs of **C2** traffic.  
+
+Another indicator that those connections are malicious is the use of not well known ports.  
+
+The first event used an SSL connection over port **49214**, which is very uncommon since SSL connection usually goes
+through port 443 (*HTTPS*). The second event, used encoded traffic over port **2404**, which is also not associated with
+any known web application.  
+
+Proceeding with the investigation, the next alert was triggered at **02:08**.  
+
+![Alert 7 - Timestamp Filtering](./images/54-Alert7_Timestamp.png "Alert 7 - Timestamp Filtering")  
+
+Filtering by this timestamp.  
+
+![Alert 7 - Timestamp Overview](./images/55-Alert7_Timestamp_Overview.png "Alert 7 - Timestamp Overview")  
+
+Narrowing down the logs, the investigation can be more focused. Again, many different types of traffic were captured,
+but the focus will be logs from **bro_con**.  
+
+![Alert 7 - Bro Filter](./images/56-Alert7_Timestamp_Bro_Con.png "Alert 7 - Bro Filter")  
+
+1. Filtering for "bro_conn" log types;  
+2. Total number of logs from the search.  
+
+![Alert 7 - Logs](./images/57-Alert7_Timestamp_Bro_Logs.png "Alert 7 - Logs")  
+
+Analysing the logs, two events highlight from the others. Both are going to the same IP address, **203.45.1.75** already
+seen before, and they are also making use of encrypted traffic through HTTP-443 port.  
+
+![Alert 7 - SSL Details](./images/58-Alert7_Timestamp_Bro_Log_Traffic.png "Alert 7 - SSL Details")  
+
+Since both connections are going to the same destination and using the same port, the info contained in both is similar,
+therefore, only one will be used for analysis.  
+
+As already seen before during the Sguil investigation, this connection is again making use of forged SSL certificates.  
+
+1. Malicious IP address;  
+2. **Certificate** info tab;  
+3. **Issuer** tab;  
+4. Fake details regarding the issuer of the certificate.  
+
+This exact connection has already been evaluated, but it came up again during the Kibana assessment. It was concluded
+that those encrypted connections were being used for data exfiltration, this makes it hard to detect and verify the
+data.  
+
+Continuing with the investigation, only one more alert needs to be verified.  
+
+![Alert 8 - Timestamp Overview](./images/59-Alert8_Timestamp.png "Alert 8 - Timestamp Overview")  
+
+This alert happened at around **04:54**.  
+
+![Alert 8 - Timestamp Overview](./images/60-Alert8_Timestamp_Overview.png "Alert 8 - Timestamp Overview")  
+
+The filter yielded too many logs for this time period, another one will be applied in order to diminish the scope.  
+
+![Alert 8 - SSL Filter](./images/61-Alert8_Timestamp_Bro_SSL.png "Alert 8 - SSL Filter")  
+
+The most important traffic here was the **bro_ssl*.  
+
+1. **Bro SSL** log filter;  
+2. Number of logs with the time and Bro filter together.  
+
+Now that the result is more focused, it's time to take a look at the logs.  
+
+![Alert 8 - Logs](./images/62-Alert8_Timestamp_Bro_SSL_Logs.png "Alert 8 - Logs")  
+
+Most logs are encrypted connections done through HTTPS over port 443. However, some of the logs at this period of time
+have connections already analysed. They are the encrypted connections at **203.45.1.75** over port **443**, and at
+**31.22.4.176** over port **3389**.  
+
+Though previously seen connections were still being flag during this time, new connection also came up. They are the
+following:  
+
+1. Encrypted connection at **115.112.43.81** over **443**;  
+2. Encrypted connection at **46.105.131.77** over 443;  
+3. Previously assessed connections.  
+
+Both new connections will be further look in depth.  
+
+![Alert 8 - Log 1](./images/63-Alert8_Timestamp_Bro_SSL_Log1.png "Alert 8 - Log 1")  
+
+The first event (***115.112.43.81***) possesses fake SSL certification.  
+
+1. Malicious IP address;  
+2. SSL **Certificate** tab;  
+3. Certification **issuer** tab;  
+4. Details regarding the issuer of the certificate.  
+
+This connection has already been assessed during the Sguil stage, but it's possible to see that the same data used to
+forge this certificate was also contained in the connection at **203.45.1.75**.  
+
+![Alert 8 - Log 2](./images/64-Alert8_Timestamp_Bro_SSL_Log2.png "Alert 8 - Log 2")  
+
+Once more, the connection presents forged detail regarding the issuer.  
+
+1. Malicious IP address;  
+2. SSL **Certificate** tab;  
+3. Certification **issuer** tab;  
+4. Forged details related to the issuer.  
+
+The info used to fake this certificate is new, meaning it was not seen in other connections, but still fake.  
+
+Even though both connections are using a well-known port (***443***), associated with **HTTPS** traffic, the connections
+are still unreliable due to the forged SSL certificates, thus the data transmitted over them are assumed to be untrusted
+and malicious in nature.  
+
+
+## Security Event's Summary  
+
+Here will come a summary of the entire security event, including details about the infection, IP address used, port used
+for connection, etc.  
+
+## Final considerations  
+
+Here will come a brief finalization paragraph. This paragraph should talk about the importance of threat hunting, the
+importance of the tools, such as Sguil and Kibana, etc.  
 
 ---
 
