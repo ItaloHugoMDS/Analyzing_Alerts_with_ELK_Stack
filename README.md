@@ -21,7 +21,11 @@ The resources used during this analysis are:
 
 1. [Prompt][link5]
 2. [Questions and Responses][link6]
-3. [Analysis][link7]
+3. [Analysis][link7]: 
+   1. [Alerts][link15]
+   2. [Pivoting to Kibana][link16]
+4. [Security Event's Summary][link17]
+5. [Final considerations][link18]
 
 ---
 
@@ -896,13 +900,66 @@ and malicious in nature.
 
 ## Security Event's Summary  
 
-Here will come a summary of the entire security event, including details about the infection, IP address used, port used
-for connection, etc.  
+The security event started on **March 19th, 2019**.  
+
+The initial infection started at **01:47**:  
+
+- Method of infection: **Download of a malicious Windows Executable**;  
+- IP address: **209.141.34.8**;  
+- Port: **80**;  
+- Filename: **test1.exe**;  
+- Malware: **VBKryjector Trojan**.  
+
+At **01:49**, the infected host proceeded to reach out to a malicious website.  
+
+- Malicious website: **toptoptop1.online**;  
+- Website's address: **103.1.184.108**;  
+- Port: **2404**;  
+- Function: **C2 Server**.  
+
+Still at around **01:49**, the host got infected with new malware:  
+
+- Method of infection: **Download of a malicious Windows Executable**;  
+- IP address: **217.23.14.81**;  
+- Port: **80**;  
+- Filename: **f4.exe**;  
+- Malware: **Cridex info-stealer**.  
+
+The infection life-cycle continued at around **02:03**. The proceeding step was to exfiltrate data.  
+
+- Detection: **Forged SSL Certificate**;  
+- IP address: **31.22.4.176**;  
+- Port: **3389**;  
+- Function: **Data Exfiltration**.  
+
+Also, at around **02:03**, a new address was reached out:  
+
+- Detection: **Traffic Behaviour**;  
+- IP address: **103.1.184.108**;  
+- Port: **2404**;  
+- Function: **C2 Server**.  
+
+From **02:08** until **04:54**, the life-cycle was concluded with more exfiltration of data through different addresses:  
+
+- Detection: **Forged SSL Certificates**;  
+- IP addresses: **203.45.1.75**, **115.112.43.81**, and **46.105.131.77**;  
+- Ports: all connections through **443**;
+- Function: **Data Exfiltration**.  
+
+It's likely the initial infection, through the **VBKryjector trojan**, was just a way to infect the host with the
+payload (**Cridex info-stealer**). From that point forward, the data was exfiltrated and the infection was concluded.  
 
 ## Final considerations  
 
-Here will come a brief finalization paragraph. This paragraph should talk about the importance of threat hunting, the
-importance of the tools, such as Sguil and Kibana, etc.  
+The field of cybersecurity is a vast and broad field, many actions and tools have to be used in order to maintain a safe
+environment. Many different activities have to be performed for evaluating and tracking a security event.  
+
+During this report, some tools and methods were used, as well as the knowledge of many fields within cybersecurity, such
+as threat hunting and malware analysis, to evaluate a security events and unfold details about its working system.  
+
+Even though different concepts from many areas of cyber were applied for this investigation, it only scratched the
+surface of the capabilities of such tools and methods. But since the goal was to determine the basics regarding the
+infection, the resources used here were more than enough to get the job done.  
 
 ---
 
@@ -920,3 +977,7 @@ importance of the tools, such as Sguil and Kibana, etc.
 [link12]: https://www.elastic.co/kibana
 [link13]: https://snort.org/
 [link14]: https://zeek.org/
+[link15]: 
+[link16]: 
+[link17]: 
+[link18]: 
