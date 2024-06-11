@@ -923,7 +923,7 @@ Still at around **01:49**, the host got infected with new malware:
 - IP address: **217.23.14.81**;  
 - Port: **80**;  
 - Filename: **f4.exe**;  
-- Malware: **Cridex info-stealer**.  
+- Malware: **Cridex Info-stealer**.  
 
 The infection life-cycle continued at around **02:03**. The proceeding step was to exfiltrate data.  
 
