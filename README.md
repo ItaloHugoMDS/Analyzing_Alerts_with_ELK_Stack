@@ -977,7 +977,7 @@ infection, the resources used here were more than enough to get the job done.
 [link12]: https://www.elastic.co/kibana
 [link13]: https://snort.org/
 [link14]: https://zeek.org/
-[link15]: 
-[link16]: 
-[link17]: 
-[link18]: 
+[link15]: https://github.com/ItaloHugoMDS/Analyzing_Alerts_with_ELK_Stack?tab=readme-ov-file#alerts
+[link16]: https://github.com/ItaloHugoMDS/Analyzing_Alerts_with_ELK_Stack?tab=readme-ov-file#pivoting-to-kibana
+[link17]: https://github.com/ItaloHugoMDS/Analyzing_Alerts_with_ELK_Stack?tab=readme-ov-file#security-events-summary
+[link18]: https://github.com/ItaloHugoMDS/Analyzing_Alerts_with_ELK_Stack?tab=readme-ov-file#final-considerations
